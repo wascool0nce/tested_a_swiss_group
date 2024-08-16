@@ -14,7 +14,7 @@ services:
       dockerfile: ./docker/Dockerfile
     entrypoint: /entrypoint
     volumes:
-      - ./apps:/project_manager
+      - ./app:/app
       - ./media:/project_manager/media
     ports:
       - "8000:8000"
