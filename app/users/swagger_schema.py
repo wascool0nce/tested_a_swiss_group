@@ -15,6 +15,35 @@ DEVICE_HEADER = openapi.Parameter(
     required=True
 )
 
+SEARCH_USER = openapi.Parameter(
+    'search',
+    openapi.IN_QUERY,
+    description="Поиск по фамилии, имени, отчеству, телефону или email",
+    type=openapi.TYPE_STRING
+)
+
+RESPONSE_SEARCH_USER = {
+    '200': openapi.Schema(
+        type=openapi.TYPE_ARRAY,
+        items=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID пользователя'),
+                'last_name': openapi.Schema(type=openapi.TYPE_STRING, description='Фамилия'),
+                'first_name': openapi.Schema(type=openapi.TYPE_STRING, description='Имя'),
+                'middle_name': openapi.Schema(type=openapi.TYPE_STRING, description='Отчество'),
+                'date_of_birth': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE, description='Дата рождения'),
+                'passport_number': openapi.Schema(type=openapi.TYPE_STRING, description='Номер паспорта'),
+                'place_of_birth': openapi.Schema(type=openapi.TYPE_STRING, description='Место рождения'),
+                'phone_number': openapi.Schema(type=openapi.TYPE_STRING, description='Телефон'),
+                'email': openapi.Schema(type=openapi.TYPE_STRING, description='Электронная почта'),
+                'registration_address': openapi.Schema(type=openapi.TYPE_STRING, description='Адрес регистрации'),
+                'residential_address': openapi.Schema(type=openapi.TYPE_STRING, description='Адрес проживания')
+            },
+        )
+    )
+}
+
 RESPONSE_CREATE_USER = {
     '200': openapi.Schema(
         type=openapi.TYPE_ARRAY,

@@ -1,7 +1,8 @@
 from django.db import models
+from django.contrib.postgres.search import SearchVector, SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
 
 
-# Create your models here.
 class User(models.Model):
     last_name = models.CharField("Фамилия", max_length=50)
     first_name = models.CharField("Имя", max_length=50)
@@ -13,10 +14,27 @@ class User(models.Model):
     email = models.EmailField("Емейл", unique=True)
     registration_address = models.CharField("Адрес регистрации", max_length=255)
     residential_address = models.CharField("Адрес проживания", max_length=255)
+    search_vector = SearchVectorField(null=True, editable=False)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        from django.contrib.postgres.search import SearchVector
+        vector = (
+            SearchVector('last_name', weight='A', config='russian') +
+            SearchVector('first_name', weight='A', config='russian') +
+            SearchVector('middle_name', weight='B', config='russian') +
+            SearchVector('phone_number', weight='A', config='russian') +
+            SearchVector('email', weight='A', config='russian')
+        )
+        User.objects.filter(pk=self.pk).update(search_vector=vector)
 
     def __str__(self):
         return f"{self.last_name} {self.first_name} {self.middle_name or ''}"
 
     class Meta:
+        indexes = [
+            GinIndex(fields=['search_vector']),
+        ]
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
